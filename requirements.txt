@@ -1,0 +1,9 @@
+ipython
+pandas
+matplotlib
+ipykernel
+apache-airflow
+boto3
+google-cloud-storage
+google-cloud-bigquery
+
