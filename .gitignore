@@ -132,3 +132,4 @@ dmypy.json
 *.parquet
 *.sas
 .DS_Store
+*.json
