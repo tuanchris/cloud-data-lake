@@ -127,4 +127,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+*.cfg
+*.csv
+*.parquet
+*.sas
+.DS_Store
 *.json
