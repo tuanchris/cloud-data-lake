@@ -1,0 +1,6 @@
+apache-airflow
+pandas
+boto3
+google_cloud_storage
+google_cloud_bigquery
+ipykernel
