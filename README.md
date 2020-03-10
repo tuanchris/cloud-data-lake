@@ -21,3 +21,7 @@ If airflow is not found, run the following commands:
 ```
 sudo pip install --ignore-installed apache-airflow
 ```
+To start airflow, run the following command:
+```
+/bin/bash start.sh
+```

@@ -5,4 +5,10 @@ ipykernel
 apache-airflow
 boto3
 google-cloud-storage
+flask_bcrypt
+gsutil
 google-cloud-bigquery
+google-auth
+google-auth-httplib2
+google-api-python-client
+pandas_gbq
