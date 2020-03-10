@@ -1,6 +1,14 @@
 # cloud-data-lake
 Comparison of data lake deployment on two cloud platforms: AWS and GCP
 
+Create a project on GCP
+Enable billing
+Navigate to IAM and create a service account
+Grant the account project owner (not recommended for production system)
+Download the JSON credentials
+
+
+
 ```
 git clone https://github.com/tuanchris/cloud-data-lake
 conda create --name cloud-data-lake python=3.7
