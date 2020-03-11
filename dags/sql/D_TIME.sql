@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `IMMIGRATION_DWH.D_TIME` AS
+CREATE OR REPLACE TABLE `{{ params.dwh_dataset }}.D_TIME` AS
 
 SELECT
   ARRIVAL_DATE DATE,
@@ -12,11 +12,11 @@ FROM (
   SELECT
     DISTINCT ARRIVAL_DATE
   FROM
-    `cloud-data-lake.IMMIGRATION_DWH.F_IMMIGRATION_DATA`
+    `{{ params.project_id }}.{{ params.dwh_dataset }}.F_IMMIGRATION_DATA`
   UNION DISTINCT
   SELECT
     DISTINCT DEPARTURE_DATE
   FROM
-    `cloud-data-lake.IMMIGRATION_DWH.F_IMMIGRATION_DATA`)
+    `{{ params.project_id }}.{{ params.dwh_dataset }}.F_IMMIGRATION_DATA`)
 
  WHERE ARRIVAL_DATE IS NOT NULL

@@ -14,6 +14,11 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
+project_id = 'cloud-data-lake'
+staging_dataset = 'IMMIGRATION_DWH_STAGING'
+dwh_dataset = 'IMMIGRATION_DWH'
+gs_bucket = 'cloud-data-lake-gcp'
+
 dag = DAG('cloud-data-lake-pipeline',
           start_date=datetime.now(),
           schedule_interval='@once',
@@ -28,9 +33,9 @@ start_pipeline = DummyOperator(
 
 load_us_cities_demo = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_us_cities_demo',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['cities/us-cities-demographics.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH_STAGING.us_cities_demo',
+    destination_project_dataset_table = f'{project_id}:{staging_dataset}.us_cities_demo',
     schema_object = 'cities/us_cities_demo.json',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
@@ -40,9 +45,9 @@ load_us_cities_demo = GoogleCloudStorageToBigQueryOperator(
 
 load_airports = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_airports',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['airports/airport-codes_csv.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH_STAGING.airport_codes',
+    destination_project_dataset_table = f'{project_id}:{staging_dataset}.airport_codes',
     schema_object = 'airports/airport_codes.json',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
@@ -51,9 +56,9 @@ load_airports = GoogleCloudStorageToBigQueryOperator(
 
 load_weather = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_weather',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['weather/GlobalLandTemperaturesByCity.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH_STAGING.temperature_by_city',
+    destination_project_dataset_table = f'{project_id}:{staging_dataset}.temperature_by_city',
     schema_object = 'weather/temperature_by_city.json',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
@@ -62,9 +67,9 @@ load_weather = GoogleCloudStorageToBigQueryOperator(
 
 load_immigration_data = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_immigration_data',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['immigration_data/*.parquet'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH_STAGING.immigration_data',
+    destination_project_dataset_table = f'{project_id}:{staging_dataset}.immigration_data',
     source_format = 'parquet',
     write_disposition='WRITE_TRUNCATE',
     skip_leading_rows = 1,
@@ -73,9 +78,9 @@ load_immigration_data = GoogleCloudStorageToBigQueryOperator(
 
 load_country = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_country',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['master_data/I94CIT_I94RES.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH.D_COUNTRY',
+    destination_project_dataset_table = f'{project_id}:{dwh_dataset}.D_COUNTRY',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
     skip_leading_rows = 1,
@@ -84,9 +89,9 @@ load_country = GoogleCloudStorageToBigQueryOperator(
 
 load_country = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_country',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['master_data/I94CIT_I94RES.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH.D_COUNTRY',
+    destination_project_dataset_table = f'{project_id}:{dwh_dataset}.D_COUNTRY',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
     skip_leading_rows = 1,
@@ -98,9 +103,9 @@ load_country = GoogleCloudStorageToBigQueryOperator(
 
 load_port = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_port',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['master_data/I94PORT.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH.D_PORT',
+    destination_project_dataset_table = f'{project_id}:{dwh_dataset}.D_PORT',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
     skip_leading_rows = 1,
@@ -112,9 +117,9 @@ load_port = GoogleCloudStorageToBigQueryOperator(
 
 load_state = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_state',
-    bucket = 'cloud-data-lake-gcp',
+    bucket = gs_bucket,
     source_objects = ['master_data/I94ADDR.csv'],
-    destination_project_dataset_table = 'cloud-data-lake:IMMIGRATION_DWH.D_STATE',
+    destination_project_dataset_table = f'{project_id}:{dwh_dataset}.D_STATE',
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
     skip_leading_rows = 1,
@@ -127,25 +132,26 @@ load_state = GoogleCloudStorageToBigQueryOperator(
 check_us_cities_demo = BigQueryCheckOperator(
     task_id = 'check_us_cities_demo',
     use_legacy_sql=False,
-    sql = 'SELECT count(*) FROM `cloud-data-lake.IMMIGRATION_DWH_STAGING.us_cities_demo`'
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.us_cities_demo`'
+
 )
 
 check_airports = BigQueryCheckOperator(
     task_id = 'check_airports',
     use_legacy_sql=False,
-    sql = 'SELECT count(*) FROM `cloud-data-lake.IMMIGRATION_DWH_STAGING.airport_codes`'
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.airport_codes`'
 )
 
 check_weather = BigQueryCheckOperator(
     task_id = 'check_weather',
     use_legacy_sql=False,
-    sql = 'SELECT count(*) FROM `cloud-data-lake.IMMIGRATION_DWH_STAGING.temperature_by_city`'
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.temperature_by_city`'
 )
 
 check_immigration_data = BigQueryCheckOperator(
     task_id = 'check_immigration_data',
     use_legacy_sql=False,
-    sql = 'SELECT count(*) FROM `cloud-data-lake.IMMIGRATION_DWH_STAGING.immigration_data`'
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.immigration_data`'
 )
 
 loaded_data_to_staging = DummyOperator(
@@ -155,36 +161,66 @@ loaded_data_to_staging = DummyOperator(
 create_immigration_data = BigQueryOperator(
     task_id = 'create_immigration_data',
     use_legacy_sql = False,
+    params = {
+        'project_id': project_id,
+        'staging_dataset': staging_dataset,
+        'dwh_dataset': dwh_dataset
+    },
     sql = './sql/F_IMMIGRATION_DATA.sql'
 )
 
 check_f_immigration_data = BigQueryCheckOperator(
     task_id = 'check_f_immigration_data',
     use_legacy_sql=False,
-    sql = 'SELECT count(*) = count(distinct cicid) FROM `cloud-data-lake.IMMIGRATION_DWH.F_IMMIGRATION_DATA`'
+    params = {
+        'project_id': project_id,
+        'staging_dataset': staging_dataset,
+        'dwh_dataset': dwh_dataset
+    },
+    sql = f'SELECT count(*) = count(distinct cicid) FROM `{project_id}.{dwh_dataset}.F_IMMIGRATION_DATA`'
 )
 
 create_d_time = BigQueryOperator(
     task_id = 'create_d_time',
     use_legacy_sql = False,
+    params = {
+        'project_id': project_id,
+        'staging_dataset': staging_dataset,
+        'dwh_dataset': dwh_dataset
+    },
     sql = './sql/D_TIME.sql'
 )
 
 create_d_weather = BigQueryOperator(
     task_id = 'create_d_weather',
     use_legacy_sql = False,
+    params = {
+        'project_id': project_id,
+        'staging_dataset': staging_dataset,
+        'dwh_dataset': dwh_dataset
+    },
     sql = './sql/D_WEATHER.sql'
 )
 
 create_d_airport = BigQueryOperator(
     task_id = 'create_d_airport',
     use_legacy_sql = False,
+    params = {
+        'project_id': project_id,
+        'staging_dataset': staging_dataset,
+        'dwh_dataset': dwh_dataset
+    },
     sql = './sql/D_AIRPORT.sql'
 )
 
 create_d_city_demo = BigQueryOperator(
     task_id = 'create_d_city_demo',
     use_legacy_sql = False,
+    params = {
+        'project_id': project_id,
+        'staging_dataset': staging_dataset,
+        'dwh_dataset': dwh_dataset
+    },
     sql = './sql/D_CITY_DEMO.sql'
 )
 

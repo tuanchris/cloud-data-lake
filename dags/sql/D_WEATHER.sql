@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `IMMIGRATION_DWH.D_WEATHER` AS
+CREATE OR REPLACE TABLE `{{ params.dwh_dataset }}.D_WEATHER` AS
 SELECT DISTINCT
   EXTRACT(year
   FROM
@@ -10,7 +10,7 @@ SELECT DISTINCT
   AVG(AverageTemperature) AVERAGE_TEMPERATURE,
   AVG(AverageTemperatureUncertainty) AVERAGE_TEMPERATURE_UNCERTAINTY
 FROM
-  `cloud-data-lake.IMMIGRATION_DWH_STAGING.temperature_by_city`
+  `{{ params.project_id }}.{{ params.staging_dataset }}.temperature_by_city`
 WHERE
   COUNTRY = 'United States'
   AND EXTRACT(year
@@ -21,7 +21,7 @@ WHERE
       FROM
         dt))
   FROM
-    `cloud-data-lake.IMMIGRATION_DWH_STAGING.temperature_by_city`)
+    `{{ params.project_id }}.{{ params.staging_dataset }}.temperature_by_city`)
 GROUP BY
   EXTRACT(year
   FROM

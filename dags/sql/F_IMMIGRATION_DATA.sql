@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `IMMIGRATION_DWH.F_IMMIGRATION_DATA` AS
+CREATE OR REPLACE TABLE `{{ params.dwh_dataset }}.F_IMMIGRATION_DATA` AS
 SELECT DISTINCT
   cicid CICID,
   CAST(i94yr AS NUMERIC) YEAR,
@@ -39,16 +39,16 @@ END
   FLTNO FLIGHT_NUMBER,
   VISATYPE VISA_TYPE
 FROM
-  `cloud-data-lake.IMMIGRATION_DWH_STAGING.immigration_data` id
+  `{{ params.project_id }}.{{ params.staging_dataset }}.immigration_data` id
 LEFT JOIN
-  `IMMIGRATION_DWH.D_COUNTRY` DC
+  `{{ params.dwh_dataset }}.D_COUNTRY` DC
 ON
   DC.COUNTRY_ID = I94RES
 LEFT JOIN
-  `IMMIGRATION_DWH.D_PORT` DP
+  `{{ params.dwh_dataset }}.D_PORT` DP
 ON
   DP.PORT_ID = i94port
 LEFT JOIN
-  `IMMIGRATION_DWH.D_STATE` DS
+  `{{ params.dwh_dataset }}.D_STATE` DS
 ON
   DS.STATE_ID = i94addr

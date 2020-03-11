@@ -1,5 +1,5 @@
 CREATE OR REPLACE TABLE
-  `IMMIGRATION_DWH.D_CITY_DEMO` AS
+  `{{ params.dwh_dataset }}.D_CITY_DEMO` AS
 SELECT DISTINCT
   CITY CITY_NAME,
   STATE STATE_NAME,
@@ -37,7 +37,7 @@ SELECT DISTINCT
       COUNT,
       NULL)) NATIVE_POPULATION
 FROM
-  `cloud-data-lake.IMMIGRATION_DWH_STAGING.us_cities_demo`
+  `{{ params.project_id }}.{{ params.staging_dataset }}.us_cities_demo`
 GROUP BY
   1,
   2,

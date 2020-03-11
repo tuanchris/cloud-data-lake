@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `IMMIGRATION_DWH.D_AIRPORT` AS
+CREATE OR REPLACE TABLE `{{ params.dwh_dataset }}.D_AIRPORT` AS
 SELECT DISTINCT
   substr(iso_region, 4,2) STATE_ID,
   name AIRPORT_NAME,
@@ -7,6 +7,6 @@ SELECT DISTINCT
   COORDINATES,
   ELEVATION_FT
 FROM
-  `cloud-data-lake.IMMIGRATION_DWH_STAGING.airport_codes`
+  `{{ params.project_id }}.{{ params.staging_dataset }}.airport_codes`
 where iso_country = 'US'
 and type != 'closed'
