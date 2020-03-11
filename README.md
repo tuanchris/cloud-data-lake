@@ -1,5 +1,5 @@
 # Cloud data lake on GCP
-## Project Summary
+### Project Summary
 This project creates a data lake on Google Cloud Platform with main focus on building a data warehouse and data pipeline. The data lake is built around the I94 Immigration data provided by the US government. The data warehouse will help US official to analyze immigration patterns to understand what factors drive people to move.
 
 ### Project Scopes
@@ -139,3 +139,7 @@ gs_bucket = 'cloud-data-lake-gcp'
 ```
 
 You can then trigger the dag and the pipeline will run.
+
+### The data warehouse
+The final data warehouse looks like this:
+![img](/img/dwh.png)
