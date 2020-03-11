@@ -27,6 +27,7 @@ services:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
+            - GOOGLE_APPLICATION_CREDENTIALS=/usr/loca/airflo/cloud-data-lake-868fafe3eba1.json
             # - AIRFLOW__WEBSERVER__AUTHENTICATE=True
             # - AIRFLOW__WEBSERVER__AUTH_BACKEND=airflow.contrib.auth.backends.password_auth
             # - POSTGRES_USER=airflow
@@ -36,7 +37,7 @@ services:
         volumes:
             - ./dags:/usr/local/airflow/dags
             - ./requirements.txt:/requirements.txt
-
+            - ./cloud-data-lake-868fafe3eba1.json:/usr/loca/airflo/cloud-data-lake-868fafe3eba1.json
             # Uncomment to include custom plugins
             - ./plugins:/usr/local/airflow/plugins
         ports:
@@ -68,6 +69,7 @@ services:
         volumes:
             - ./dags:/usr/local/airflow/dags
             - ./requirements.txt:/requirements.txt
+            - ./cloud-data-lake-868fafe3eba1.json:/usr/loca/airflo/cloud-data-lake-868fafe3eba1.json
             # - AIRFLOW__WEBSERVER__AUTHENTICATE=True
             # - AIRFLOW__WEBSERVER__AUTH_BACKEND=airflow.contrib.auth.backends.password_auth
             # Uncomment to include custom plugins
@@ -76,6 +78,7 @@ services:
             - LOAD_EX=n
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
+            - GOOGLE_APPLICATION_CREDENTIALS=/usr/loca/airflo/cloud-data-lake-868fafe3eba1.json
             # - POSTGRES_USER=airflow
             # - POSTGRES_PASSWORD=airflow
             # - POSTGRES_DB=airflow
@@ -90,11 +93,13 @@ services:
         volumes:
             - ./dags:/usr/local/airflow/dags
             - ./requirements.txt:/requirements.txt
+            - ./cloud-data-lake-868fafe3eba1.json:/usr/loca/airflo/cloud-data-lake-868fafe3eba1.json
             # Uncomment to include custom plugins
             - ./plugins:/usr/local/airflow/plugins
         environment:
             - FERNET_KEY=46BKJoQYlPPOexq0OhDZnIlNepKFf87WFwLbfzqDDho=
             - EXECUTOR=Celery
+            - GOOGLE_APPLICATION_CREDENTIALS=/usr/loca/airflo/cloud-data-lake-868fafe3eba1.json
             # - AIRFLOW__WEBSERVER__AUTHENTICATE=True
             # - AIRFLOW__WEBSERVER__AUTH_BACKEND=airflow.contrib.auth.backends.password_auth
             # - POSTGRES_USER=airflow
