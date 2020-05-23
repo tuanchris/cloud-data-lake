@@ -1,3 +1,4 @@
+# Import packages
 from airflow import DAG
 from airflow.contrib.operators.bigquery_operator import BigQueryOperator
 from airflow.operators.dummy_operator import DummyOperator
@@ -5,6 +6,7 @@ from datetime import datetime, timedelta
 from airflow.contrib.operators.gcs_to_bq import GoogleCloudStorageToBigQueryOperator
 from airflow.contrib.operators.bigquery_check_operator import BigQueryCheckOperator
 
+# Define default arguments
 default_args = {
     'owner': 'Tuan Nguyen',
     'depends_on_past': False,
@@ -14,11 +16,13 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
+# Define dag variables
 project_id = 'cloud-data-lake'
 staging_dataset = 'IMMIGRATION_DWH_STAGING'
 dwh_dataset = 'IMMIGRATION_DWH'
 gs_bucket = 'cloud-data-lake-gcp'
 
+# Define dag
 dag = DAG('cloud-data-lake-pipeline',
           start_date=datetime.now(),
           schedule_interval='@once',
@@ -31,6 +35,7 @@ start_pipeline = DummyOperator(
     dag = dag
 )
 
+# Load data from GCS to BQ
 load_us_cities_demo = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_us_cities_demo',
     bucket = gs_bucket,
@@ -76,6 +81,38 @@ load_immigration_data = GoogleCloudStorageToBigQueryOperator(
     autodetect = True
 )
 
+# Check loaded data not null
+check_us_cities_demo = BigQueryCheckOperator(
+    task_id = 'check_us_cities_demo',
+    use_legacy_sql=False,
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.us_cities_demo`'
+
+)
+
+check_airports = BigQueryCheckOperator(
+    task_id = 'check_airports',
+    use_legacy_sql=False,
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.airport_codes`'
+)
+
+check_weather = BigQueryCheckOperator(
+    task_id = 'check_weather',
+    use_legacy_sql=False,
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.temperature_by_city`'
+)
+
+
+check_immigration_data = BigQueryCheckOperator(
+    task_id = 'check_immigration_data',
+    use_legacy_sql=False,
+    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.immigration_data`'
+)
+
+loaded_data_to_staging = DummyOperator(
+    task_id = 'loaded_data_to_staging'
+)
+
+# Create dimensions data from staging tables to data warehouse tables
 load_country = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_country',
     bucket = gs_bucket,
@@ -118,35 +155,7 @@ load_state = GoogleCloudStorageToBigQueryOperator(
     ]
 )
 
-check_us_cities_demo = BigQueryCheckOperator(
-    task_id = 'check_us_cities_demo',
-    use_legacy_sql=False,
-    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.us_cities_demo`'
-
-)
-
-check_airports = BigQueryCheckOperator(
-    task_id = 'check_airports',
-    use_legacy_sql=False,
-    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.airport_codes`'
-)
-
-check_weather = BigQueryCheckOperator(
-    task_id = 'check_weather',
-    use_legacy_sql=False,
-    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.temperature_by_city`'
-)
-
-check_immigration_data = BigQueryCheckOperator(
-    task_id = 'check_immigration_data',
-    use_legacy_sql=False,
-    sql = f'SELECT count(*) FROM `{project_id}.{staging_dataset}.immigration_data`'
-)
-
-loaded_data_to_staging = DummyOperator(
-    task_id = 'loaded_data_to_staging'
-)
-
+# Transform, load, and check fact data
 create_immigration_data = BigQueryOperator(
     task_id = 'create_immigration_data',
     use_legacy_sql = False,
@@ -169,6 +178,7 @@ check_f_immigration_data = BigQueryCheckOperator(
     sql = f'SELECT count(*) = count(distinct cicid) FROM `{project_id}.{dwh_dataset}.F_IMMIGRATION_DATA`'
 )
 
+# Create remaining dimensions data
 create_d_time = BigQueryOperator(
     task_id = 'create_d_time',
     use_legacy_sql = False,
@@ -217,6 +227,7 @@ finish_pipeline = DummyOperator(
     task_id = 'finish_pipeline'
 )
 
+# Define task dependencies
 dag >> start_pipeline >> [load_us_cities_demo, load_airports, load_weather, load_immigration_data]
 
 load_us_cities_demo >> check_us_cities_demo
