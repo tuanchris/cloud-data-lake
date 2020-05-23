@@ -112,7 +112,7 @@ loaded_data_to_staging = DummyOperator(
     task_id = 'loaded_data_to_staging'
 )
 
-# Create dimensions data from staging tables to data warehouse tables
+# Load dimensions data from files directly to DWH table
 load_country = GoogleCloudStorageToBigQueryOperator(
     task_id = 'load_country',
     bucket = gs_bucket,
