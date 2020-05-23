@@ -84,17 +84,6 @@ load_country = GoogleCloudStorageToBigQueryOperator(
     write_disposition='WRITE_TRUNCATE',
     source_format = 'csv',
     skip_leading_rows = 1,
-    autodetect = True
-)
-
-load_country = GoogleCloudStorageToBigQueryOperator(
-    task_id = 'load_country',
-    bucket = gs_bucket,
-    source_objects = ['master_data/I94CIT_I94RES.csv'],
-    destination_project_dataset_table = f'{project_id}:{dwh_dataset}.D_COUNTRY',
-    write_disposition='WRITE_TRUNCATE',
-    source_format = 'csv',
-    skip_leading_rows = 1,
     schema_fields=[
         {'name': 'COUNTRY_ID', 'type': 'NUMERIC', 'mode': 'NULLABLE'},
         {'name': 'COUNTRY_NAME', 'type': 'STRING', 'mode': 'NULLABLE'},
