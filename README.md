@@ -106,19 +106,19 @@ Clone the project, create environment, install required packages by running the 
 
 ```
 git clone https://github.com/tuanchris/cloud-data-lake
-conda create --name cloud-data-lake python=3.7
-conda activate cloud-data-lake
-cd cloud-data-lake
-pip install --user -r requirements.txt
-```
+cd cloud-data-lake```
 
-Install docker if it's not already installed. You can find the resources to do that [here](https://docs.docker.com/install/). Run the following commands to bring up the Airflow instance:
+Install docker if it's not already installed. You can find the resources to do that [here](https://docs.docker.com/install/).
+
+Install the Astronomer CLI following the instructions [here](https://docs.astronomer.io/enterprise/cli-quickstart/). 
+
+Run the following commands to bring up the Airflow instance:
 ```
-make run
+astro d start
 ```
 You can look at the logs by running `make logs` if you need to debug something. You can access and manage the pipeline by typing the following address to a browser:
 ```
-localhost/admin/
+localhost:8080/admin/
 ```
 If everything is setup correctly, you will see the following screen:
 
