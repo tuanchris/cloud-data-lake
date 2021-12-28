@@ -106,7 +106,8 @@ Clone the project, create environment, install required packages by running the 
 
 ```
 git clone https://github.com/tuanchris/cloud-data-lake
-cd cloud-data-lake```
+cd cloud-data-lake
+```
 
 Install docker if it's not already installed. You can find the resources to do that [here](https://docs.docker.com/install/).
 
